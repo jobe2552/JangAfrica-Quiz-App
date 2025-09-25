@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JangAfrica Learning Centre Quiz</title>
+  <style>
+    body {
+      font-family: 'Barlow', sans-serif;
+      background-color: lightblue;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      text-align: center;
+      font-family: 'Arial Black', sans-serif;
+      font-size: 36pt;
+      margin: 20px 0;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 20px;
+    }
+    nav a {
+      font-size: 16pt;
+      text-decoration: none;
+      color: black;
+      font-family: 'Barlow', sans-serif;
+    }
+    .container {
+      width: 80%;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+    }
+    .hidden {
+      display: none;
+    }
+    .progress-bar {
+      width: 100%;
+      background-color: #ddd;
+      border-radius: 10px;
+      margin: 15px 0;
+    }
+    .progress {
+      height: 20px;
+      background-color: green;
+      width: 0%;
+      border-radius: 10px;
+      text-align: center;
+      color: white;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px 5px;
+      background: darkblue;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: navy;
+    }
+  </style>
+</head>
+<body>
+
+  <header>JangAfrica Learning Centre</header>
+  <nav>
+    <a href="#" onclick="showPage('home')">Home</a>
+    <a href="#" onclick="showPage('quiz')">Quiz</a>
+    <a href="#" onclick="showPage('help')">Help</a>
+    <a href="#" onclick="showPage('about')">About</a>
+  </nav>
+
+  <div class="container" id="home">
+    <h2>Welcome to JangAfrica Maths Quiz</h2>
+    <p>Click on <b>Quiz</b> to start your practice.</p>
+  </div>
+
+  <!-- Quiz Page -->
+  <div class="container hidden" id="quiz">
+    <div id="userDetails">
+      <h3>Enter Your Details</h3>
+      <label>Name: <input type="text" id="name"></label><br>
+      <label>Grade: <input type="text" id="grade"></label><br>
+      <label>Age: <input type="number" id="age"></label><br>
+      <label>School: <input type="text" id="school"></label><br>
+      <label>Number of Questions: <input type="number" id="numQ"></label><br>
+      <label>Time (mins): <input type="number" id="time"></label><br>
+      <button onclick="goNext()">Next</button>
+    </div>
+
+    <div id="topicSelect" class="hidden">
+      <h3>Select Topic</h3>
+      <select id="topic">
+        <option>Addition and Subtraction</option>
+        <option>Multiplication</option>
+        <option>Types of Numbers</option>
+        <option>Sets</option>
+        <option>Factors and Multiples</option>
+        <option>Approximations</option>
+        <option>Decimals</option>
+        <option>Fractions</option>
+        <option>Integers</option>
+        <option>Linear Inequalities</option>
+        <option>Basic Algebra</option>
+        <option>Indices</option>
+        <option>Geometry</option>
+        <option>Angles</option>
+        <option>Ratio and Proportion</option>
+        <option>Time</option>
+        <option>Money</option>
+        <option>Interest</option>
+        <option>Trigonometry</option>
+        <option>Statistics</option>
+        <option>Probability</option>
+        <option>Logic and Reasoning</option>
+      </select><br>
+      <button onclick="startQuiz()">Start Quiz</button>
+    </div>
+
+    <div id="quizArea" class="hidden">
+      <h3 id="question">Question will appear here</h3>
+      <div id="options"></div>
+      <div class="progress-bar"><div id="progress" class="progress"></div></div>
+    </div>
+
+    <div id="results" class="hidden">
+      <h3>Quiz Results</h3>
+      <p>Correct Answers: <span id="correct"></span></p>
+      <p>Wrong Answers: <span id="wrong"></span></p>
+      <button onclick="startAgain()">Start Again</button>
+      <button onclick="window.print()">Print</button>
+    </div>
+  </div>
+
+  <!-- Help -->
+  <div class="container hidden" id="help">
+    <h2>Help</h2>
+    <p>Contact us:</p>
+    <p>Tel: +(220) 594 4287 / 263 0798</p>
+    <p>Email: info.jangafrica@gmail.com</p>
+  </div>
+
+  <!-- About -->
+  <div class="container hidden" id="about">
+    <h2>About</h2>
+    <p>
+      JangAfrica Learning Centre Quiz Program is designed to help students
+      strengthen their Mathematics knowledge through interactive practice.
+      It covers a wide range of topics, provides instant feedback, and
+      motivates learners to improve. By engaging with this platform,
+      students build confidence, accuracy, and problem-solving skills
+      essential for academic success.
+    </p>
+  </div>
+
+  <script>
+    function showPage(pageId) {
+      document.querySelectorAll('.container').forEach(div => div.classList.add('hidden'));
+      document.getElementById(pageId).classList.remove('hidden');
+    }
+
+    function goNext() {
+      document.getElementById('userDetails').classList.add('hidden');
+      document.getElementById('topicSelect').classList.remove('hidden');
+    }
+
+    let questions = [
+      { q: "5 + 3 = ?", opts: ["6","7","8","9"], ans: "8" },
+      { q: "12 - 4 = ?", opts: ["6","8","7","5"], ans: "8" },
+      { q: "6 × 2 = ?", opts: ["12","10","14","16"], ans: "12" }
+    ];
+    let index = 0, correct = 0, wrong = 0;
+
+    function startQuiz() {
+      document.getElementById('topicSelect').classList.add('hidden');
+      document.getElementById('quizArea').classList.remove('hidden');
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      if(index >= questions.length) {
+        endQuiz();
+        return;
+      }
+      let q = questions[index];
+      document.getElementById('question').innerText = q.q;
+      let optsDiv = document.getElementById('options');
+      optsDiv.innerHTML = "";
+      q.opts.forEach(opt => {
+        let btn = document.createElement('button');
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(opt, q.ans);
+        optsDiv.appendChild(btn);
+      });
+      updateProgress();
+    }
+
+    function checkAnswer(opt, ans) {
+      if(opt === ans) correct++; else wrong++;
+      index++;
+      loadQuestion();
+    }
+
+    function updateProgress() {
+      let progress = document.getElementById('progress');
+      let percent = Math.floor((index / questions.length) * 100);
+      progress.style.width = percent + "%";
+      progress.innerText = percent + "%";
+    }
+
+    function endQuiz() {
+      document.getElementById('quizArea').classList.add('hidden');
+      document.getElementById('results').classList.remove('hidden');
+      document.getElementById('correct').innerText = correct;
+      document.getElementById('wrong').innerText = wrong;
+    }
+
+    function startAgain() {
+      index = 0; correct = 0; wrong = 0;
+      document.getElementById('results').classList.add('hidden');
+      document.getElementById('userDetails').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
